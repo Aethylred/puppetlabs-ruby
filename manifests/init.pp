@@ -74,9 +74,51 @@ class ruby (
     $rubygems_package = $ruby::params::rubygems_package,
 ) inherits ruby::params {
 
+  # Ruby package names are not straightforward. Especially in Debian
+  # osfamily Linux distributions
+  # ruby is a virtual package that points to ruby1.8
+  # ruby1.8 installs Ruby 1.8.7 (and earlier versions)
+  # ruby1.9.1 installs Ruby 1.9.1
+  # ruby1.9.1-full installs Ruby 1.9.1
+  # ruby1.9.3 installs Ruby 1.9.3
+  # Ruby 2.0.0 is not yet available
+  #
+  # ...and this should all be overridden if a package is specified
+
+  case $::osfamily {
+    Debian: {
+      case $ruby_package {
+        installed: {
+          $real_ruby_version = $version
+          $real_ruby_package = $ruby_package
+        }
+        default:{
+          case $version {
+            /^1\.8.*$/:{
+              $real_ruby_version = $version
+              $real_ruby_package = "${ruby::params::ruby_package}1.8"
+            }
+            /^1\.9.*$/:{
+              $real_ruby_version = $ruby::params::version
+              $real_ruby_package = "${ruby::params::ruby_package}${version}"
+            }
+            default: {
+              $real_ruby_version = $version
+              $real_ruby_package = $ruby_package
+            }
+          }
+        }
+      }
+    }
+    default: {
+      $real_ruby_version = $version
+      $real_ruby_package = $ruby_package
+    }
+  }
+
   package { 'ruby':
-    ensure => $version,
-    name   => $ruby_package,
+    ensure => $real_ruby_version,
+    name   => $real_ruby_package,
   }
 
   # if rubygems_update is set to true then we only need to make the package

@@ -136,7 +136,7 @@ describe 'ruby', :type => :class do
     }
   end
 
-  describe 'when called with custom rubygems and ruby versions on debian' do
+  describe 'when called with custom rubygems (1.8.6) and ruby (1.8.7) versions on debian' do
     let (:facts) { {  :osfamily => 'Debian',
                       :path     => '/usr/local/bin:/usr/bin:/bin' } }
     let (:params) { {   :gems_version => '1.8.6',
@@ -144,10 +144,29 @@ describe 'ruby', :type => :class do
     it {
       should contain_package('ruby').with({
         'ensure'  => '1.8.7',
-        'name'    => 'ruby',
+        'name'    => 'ruby1.8',
       })
       should contain_package('rubygems').with({
         'ensure'  => '1.8.6',
+        'require' => 'Package[ruby]',
+      })
+      should_not contain_package('rubygems-update')
+      should_not contain_exec('ruby::update_rubygems')
+    }
+  end
+
+  describe 'when called with custom rubygems (1.8.14) and ruby (1.9.1) versions on debian' do
+    let (:facts) { {  :osfamily => 'Debian',
+                      :path     => '/usr/local/bin:/usr/bin:/bin' } }
+    let (:params) { {   :gems_version => '1.8.14',
+                        :version      => '1.9.1', } }
+    it {
+      should contain_package('ruby').with({
+        'ensure'  => 'installed',
+        'name'    => 'ruby1.9.1',
+      })
+      should contain_package('rubygems').with({
+        'ensure'  => '1.8.14',
         'require' => 'Package[ruby]',
       })
       should_not contain_package('rubygems-update')
