@@ -102,6 +102,10 @@ class ruby (
               $real_ruby_version = $ruby::params::version
               $real_ruby_package = "${ruby::params::ruby_package}${version}"
             }
+            /^2\.0.*$/:{
+              $real_ruby_version = $ruby::params::version
+              $real_ruby_package = "${ruby::params::ruby_package}2.0"
+            }
             default: {
               $real_ruby_version = $version
               $real_ruby_package = $ruby_package
