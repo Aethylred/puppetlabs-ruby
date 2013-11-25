@@ -76,6 +76,10 @@ Ruby Enterprise Edition, Ruby versions [later than 1.9.3-preview1](http://www.ru
 
 The `ruby::config` class sets global environment variables that tune the Ruby memory heap and it's garbage collection as [per the Ruby Enterprise Edition documentation](http://www.rubyenterpriseedition.com/documentation.html#_garbage_collector_performance_tuning). This should allow the configuration of Ruby to better suit a deployed application and reduce the memory overhead of long-running Ruby processes (e.g. the [Puppet daemon](http://www.masterzen.fr/2010/01/28/puppet-memory-usage-not-a-fatality/)). The memory overhead issue can be further reduced by upgrading Ruby to a distribution using a [bitmap marked garbage collection](http://patshaughnessy.net/2012/3/23/why-you-should-be-excited-about-garbage-collection-in-ruby-2-0) patch (e.g. as provided by [BrightBox](http://docs.brightbox.com/ruby/ubuntu/)) or to [Ruby 2.x](https://www.ruby-lang.org/en/news/2013/02/24/ruby-2-0-0-p0-is-released/).
 
+### More References
+
+* [Demystifying the Ruby GC](http://samsaffron.com/archive/2013/11/22/demystifying-the-ruby-gc) by Sam Saffron
+
 ### Parameters
 
 All the parameters are not set by default, which will revert to the default values for Ruby.
