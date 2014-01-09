@@ -72,6 +72,7 @@ class ruby (
     $ruby_dev         = $ruby::params::ruby_dev,
     $ruby_package     = $ruby::params::ruby_package,
     $rubygems_package = $ruby::params::rubygems_package,
+    $switch           = undef
 ) inherits ruby::params {
 
   # Ruby package names are not straightforward. Especially in Debian
@@ -153,6 +154,26 @@ class ruby (
       command     => 'update_rubygems',
       refreshonly => true,
       subscribe   => Package['rubygems-update'],
+    }
+  }
+
+  if $switch {
+    case $::operatingsystem {
+      Ubuntu: {
+        package{'ruby-switch':
+          ensure  => installed,
+          name    => $ruby::params::ruby_switch_package,
+          require => Package['ruby'],
+        }
+        exec{'switch_ruby':
+          command => "/usr/bin/ruby-switch --set ${real_ruby_package}",
+          unless  => "/usr/bin/ruby-switch --check|grep ${real_ruby_package}",
+          require => Package['ruby-switch'],
+        }
+      }
+      default: {
+        notice("The switch parameter for the ruby class does not work for ${::operatingsystem}, no action taken.")
+      }
     }
   }
 
